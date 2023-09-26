@@ -1,9 +1,8 @@
 import subprocess
 from .command import HydraCommandBuilder
-from .parsing import check_output
+from .parsing import get_line_type, LineType
 
-def bruteforce(command_builder: HydraCommandBuilder, found_callback, exit_callback=None, error_callback=None) -> None:
-    print(" ".join(command_builder.build()))
+def bruteforce(command_builder: HydraCommandBuilder, line_handler, exit_callback=None, error_callback=None) -> None:
     process = subprocess.Popen(command_builder.build(), stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     while True:
         try:
@@ -11,8 +10,12 @@ def bruteforce(command_builder: HydraCommandBuilder, found_callback, exit_callba
             if process.poll() is not None:
                 break
             if output:
-                # parse
-                check_output(output.decode("utf-8"))
+                if get_line_type(output.decode("utf-8")) == LineType.FINISHED:
+                    if exit_callback:
+                        exit_callback()
+                    process.kill()
+                    break
+                line_handler(output.decode("utf-8"))
         except KeyboardInterrupt:
             if exit_callback:
                 exit_callback()
@@ -23,5 +26,5 @@ def bruteforce(command_builder: HydraCommandBuilder, found_callback, exit_callba
     if rc != 0:
         if error_callback:
             error_callback()
-        raise Exception("Error has occured")
+        # raise Exception("Hydra exited with code " + str(rc))
     return rc

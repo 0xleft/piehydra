@@ -48,4 +48,4 @@ class HydraCommandBuilder:
         if self.extra_input is None and self.method == "http-form-post":
             raise Exception("Extra input not set")
         
-        return ["hydra"] + self.args + [self.target, self.method, self.extra_input]
+        return ["hydra"] + self.args + [self.target, self.method, self.extra_input or ""]

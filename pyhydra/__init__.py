@@ -9,10 +9,4 @@ if system() == "Windows":
     exit()
 
 if not is_hydra_installed():
-    print("hydra is not installed")
-    if input("would you like to install it? (y/n)").lower() == "y":
-        from .install import install_hydra
-        install_hydra()
-    else:
-        print("exiting...")
-        exit()
+    raise Exception("hydra is not installed")

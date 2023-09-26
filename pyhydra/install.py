@@ -9,7 +9,3 @@ def is_hydra_installed():
     except subprocess.CalledProcessError:
         return True
     return True
-
-def install_hydra():
-    subprocess.Popen(["sudo", "apt", "install", "hydra", "-y"])
-    print("hydra installed")
