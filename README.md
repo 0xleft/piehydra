@@ -1,4 +1,4 @@
-# A wrapper for hydra (bruteforce tool)
+# A python wrapper for hydra (bruteforce tool)
 
 ## Description
 
@@ -39,11 +39,11 @@ Found: test:test
 
 ## Install
 
-Note you must have hydra-thc installed for this to work.
+Note you must have hydra installed for this to work.
 
 `sudo apt install hydra`
 
-Hydra-thc is licensed under AGPL which can be found [here](https://github.com/vanhauser-thc/thc-hydra/blob/master/LICENSE)
+Note that hydra itself is licensed under AGPL which can be found [here](https://github.com/vanhauser-thc/thc-hydra/blob/master/LICENSE)
 
 ```bash
 pip install piehydra
