@@ -23,6 +23,10 @@ def bruteforce(command_builder: HydraCommandBuilder, line_handler, exit_callback
             print("Keyboard interrupt")
             break
     rc = process.poll()
+    # if exited sucecsfully, rc will be None
+    if rc == None:
+        return 0
+    # if exited with error, rc will be non-zero or 255 more likely
     if rc != 0:
         if error_callback:
             error_callback()

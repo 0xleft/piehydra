@@ -1,15 +1,4 @@
-from enum import Enum
-
-class LineType(Enum):
-    ATTEMPT = 0
-    STATUS = 1
-    WARNING = 2
-    VERBOSE = 3
-    INFO = 4
-    DATA = 5
-    FOUND = 6
-    UNDEFINED = 7
-    FINISHED = 8
+from .objects import *
 
 # nice function lol java>python switch
 def get_line_type(line: str):
@@ -17,22 +6,22 @@ def get_line_type(line: str):
         return LineType.DATA
     elif "[ATTEMPT]" in line:
         return LineType.ATTEMPT
-    elif "[STATUS]" in line:
-        return LineType.STATUS
     elif "[WARNING]" in line:
         return LineType.WARNING
     elif "[VERBOSE]" in line:
         return LineType.VERBOSE
     elif "[INFO]" in line:
         return LineType.INFO
-    elif "return lineword" in line and "[ATTEMPT]" not in line and line.startswith("["):
+    elif "password" in line and "[ATTEMPT]" not in line and line.startswith("["):
         return LineType.FOUND
-    elif "finished" in line:
+    elif "finished" in line or "completed" in line:
         return LineType.FINISHED
+    elif "[STATUS]" in line:
+        return LineType.STATUS
     else:
         return LineType.UNDEFINED
 
-def parse(line: str) -> object:
+def parse(line: str) -> Line:
     if get_line_type(line) == LineType.ATTEMPT:
         return parse_attempt(line)
     elif get_line_type(line) == LineType.STATUS:
@@ -53,45 +42,37 @@ def parse(line: str) -> object:
         return parse_undefined(line)
 
 def parse_finished(line: str):
-    return line, LineType.FINISHED
+    return FinishedLine(line)
 
 def parse_found(line: str):
-    parsed_line = line.split(" host: ")[1]
-    parsed_line = parsed_line.split(" ")
-    print(parsed_line)
+    split_line = line.strip().split(" ")
+    target = split_line[2]
+    username = split_line[6]
+    password = split_line[10]
+    return FoundLine(target, username, password, line)
 
 def parse_data(line: str):
-    line = line.replace("[DATA] ", "")
-    return {
-        "type": LineType.DATA,
-        "data": line
-    }
+    return DataLine(line.replace("[DATA] ", ""), line)
 
 def parse_attempt(line: str):
-    line = line.split(" ")
-    target = line[2]
-    username = line[5]
-    password = line[8]
-    number = line[10]
-    return {
-        "type": LineType.ATTEMPT,
-        "target": target,
-        "username": username,
-        "password": password,
-        "number": number
-    }
+    split_line = line.split(" ")
+    target = split_line[2]
+    username = split_line[5][1:-1]
+    password = split_line[8][1:-1]
+    number = split_line[10]
+    return AttemptLine(target, username, password, number, line)
 
 def parse_status(line: str):
-    return line
+    return StatusLine(line.replace("[STATUS] ", ""), line)
 
 def parse_warning(line: str):
-    return line
+    return WarningLine(line.replace("[WARNING] ", ""), line)
 
 def parse_verbose(line: str):
-    return line
+    return VerboseLine(line.replace("[VERBOSE] ", ""), line)
 
 def parse_info(line: str):
-    return line
+    return InfoLine(line.replace("[INFO] ", ""), line)
 
 def parse_undefined(line: str):
-    return line
+    return UndefinedLine(line, line)
