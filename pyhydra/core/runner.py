@@ -26,5 +26,5 @@ def bruteforce(command_builder: HydraCommandBuilder, line_handler, exit_callback
     if rc != 0:
         if error_callback:
             error_callback()
-        # raise Exception("Hydra exited with code " + str(rc))
+        raise Exception("Hydra exited with code " + str(rc))
     return rc
